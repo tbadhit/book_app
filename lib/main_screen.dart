@@ -104,9 +104,20 @@ class _MainScreenState extends State<MainScreen> {
                       style: TextStyle(
                           fontSize: 22, fontWeight: FontWeight.w600))),
               Container(
-                // PANNGIL WIDGET MODE LIST & GRIDNYA DIBAWAH INI :
-                child: isGridView ? buildGridView(context) : buildListView(),
-              )
+                  // PANNGIL WIDGET MODE LIST & GRIDNYA DIBAWAH INI :
+                  child: LayoutBuilder(
+                builder: (context, BoxConstraints constrains) {
+                  if (constrains.maxWidth <= 600) {
+                    return isGridView
+                        ? buildGridView(context, 2)
+                        : buildListView();
+                  } else if (constrains.maxWidth <= 1200) {
+                    return buildGridView(context, 4);
+                  } else {
+                    return buildGridView(context, 6);
+                  }
+                },
+              ))
             ],
           ),
         ),
@@ -178,11 +189,11 @@ class _MainScreenState extends State<MainScreen> {
   //----------Akhir (5)-------------------------------------
 
   // (6) BIKIN WIDGET UNTUK MODE LISTNYA
-  GridView buildGridView(BuildContext context) {
+  GridView buildGridView(BuildContext context, int gridCount) {
     return GridView.count(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
-      crossAxisCount: 2,
+      crossAxisCount: gridCount,
       children: List.generate(listBook.length, (index) {
         return InkWell(
           // MEMBUAT FUNGSI KETIKA CARDNYA DI KLIK DIA PINDAH KE HALAMAN DETAIL
@@ -199,12 +210,13 @@ class _MainScreenState extends State<MainScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Container(
+                Expanded(
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.only(top: 10, left: 50, right: 50),
                     child: Image.asset(
                       listBook[index].imageAsset,
-                      width: 70,
+                      width: MediaQuery.of(context).size.width,
                       fit: BoxFit.fill,
                     ),
                   ),
